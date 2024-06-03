@@ -5,7 +5,7 @@ let make size =
   let table = Array.make table_size 0 in
   let sample_size = if size == 0 then 10 else size * 10 in
   let block_mask = (Array.length table lsr 3) - 1 in
-  { table; sample_size; block_mask; size }
+  { table; sample_size; block_mask; size = 0 }
 
 let sample_size t = t.sample_size
 let block_mask t = t.block_mask
@@ -14,13 +14,24 @@ let size t = t.size
 
 let increment_at t i j =
   let offset = j lsl 2 in
-  let mask = 0xf lsl 2 in
+  let mask = 0xf lsl offset in
   if t.table.(i) land mask != mask then (
     t.table.(i) <- t.table.(i) + (1 lsl offset);
     true)
   else false
 
-let reset _t = ()
+let reset t =
+  let count = ref 0 in
+  Array.map_inplace
+    (fun value ->
+      let zz = value land 0x77 |> Z.of_int in
+      let pop = Z.popcount zz in
+      count := !count + pop;
+      (value lsr 1) land 0x11)
+    t.table;
+  let size' = (t.size - (!count lsr 2)) lsr 1 in
+  { t with size = size' }
+
 let block t entry = (entry land t.block_mask) lsl 3
 
 let increment t ~entry =
@@ -39,9 +50,11 @@ let increment t ~entry =
     || incr index.(6) index.(2)
     || incr index.(7) index.(3)
   in
-  let size' = +t.size in
-  if added && size' == t.sample_size then reset t else ();
-  { t with size = size' }
+  let size' = t.size + 1 in
+  match added with
+  | false -> t
+  | true when size' == t.sample_size -> { (reset t) with size = size' }
+  | true -> { t with size = size' }
 
 let frequency t ~entry =
   let count = Array.make 4 0 in

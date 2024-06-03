@@ -19,7 +19,7 @@
  (name tiny_lfu)
  (synopsis "OCaml implementation of Tiny-LFU cache")
  (description "A longer description")
- (depends ocaml dune (alcotest :with-test))
+ (depends ocaml dune zarith (alcotest :with-test))
  (tags
   (topics "to describe" your project)))
 

@@ -1,2 +1,3 @@
 (library
- (public_name tiny_lfu))
+ (public_name tiny_lfu)
+ (libraries zarith))

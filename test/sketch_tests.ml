@@ -27,7 +27,8 @@ let test_increment () =
     (Sketch.frequency sketch ~entry:1);
   Alcotest.(check int)
     "Should have have estimate for 0" 0
-    (Sketch.frequency sketch ~entry:0)
+    (Sketch.frequency sketch ~entry:0);
+  Alcotest.(check int) "Should have size 1" 1 (Sketch.size sketch)
 
 let test_increment_max () =
   let entry = 42 in
@@ -38,6 +39,23 @@ let test_increment_max () =
     "Should have max count value" 15
     (Sketch.frequency s' ~entry)
 
+let test_increment_zero () =
+  let sketch = Sketch.make 64 |> Sketch.increment ~entry:0 in
+  Alcotest.(check int)
+    "Should have correct estimate" 1
+    (Sketch.frequency sketch ~entry:0)
+
+let test_reset () =
+  let c = Array.make 4 0 in
+  let sketch = Sketch.make 64 in
+  let s' =
+    Array.fold_left (fun s _ -> Sketch.increment s ~entry:1) sketch c
+    |> Sketch.reset
+  in
+  Alcotest.(check int)
+    "Should age counters correctly" 0
+    (Sketch.frequency s' ~entry:1)
+
 let v =
   let open Alcotest in
   ( "Sketch tests",
@@ -45,4 +63,6 @@ let v =
       test_case "Test Creation" `Quick test_make;
       test_case "Test Increment" `Quick test_increment;
       test_case "Test Max Increment" `Quick test_increment_max;
+      test_case "Test Incrementing 0" `Quick test_increment_zero;
+      test_case "Test reset" `Quick test_reset;
     ] )
