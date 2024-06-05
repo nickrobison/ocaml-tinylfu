@@ -7,3 +7,10 @@
  (name lru_qcheck)
  (modules lru_qcheck)
  (libraries tiny_lfu alcotest qcheck-alcotest barrier))
+
+(test
+ (name lru_stm)
+ (modules lru_stm)
+ (libraries tiny_lfu alcotest qcheck-core qcheck-stm.stm stm_run)
+ (preprocess
+  (pps ppx_deriving.show)))

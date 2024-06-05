@@ -34,11 +34,10 @@ module Make (K : Key) (V : Value) = struct
     }
 
   let is_empty ~xt cache = Xt.get ~xt cache.size == 0
-  let size cache ~xt = Xt.get ~xt cache.size
+  let size ~xt cache = Xt.get ~xt cache.size
   let capacity cache ~xt:_ = cache.capacity
 
   let put ~xt cache k v =
-    Fmt.pr "Adding %a %a to cache\n" K.pp k V.pp v;
     let node =
       match Hashtbl.Xt.find_opt ~xt cache.table k with
       | None ->

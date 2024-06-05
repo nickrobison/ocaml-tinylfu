@@ -1,0 +1,13 @@
+(library
+ (name stm_run)
+ (libraries
+  qcheck-core
+  qcheck-core.runner
+  qcheck-stm.stm
+  qcheck-stm.sequential
+  qcheck-stm.thread
+  (select
+   empty.ml
+   from
+   (qcheck-stm.domain -> empty.ocaml5.ml)
+   (-> empty.ocaml5.ml))))

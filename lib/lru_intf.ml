@@ -5,7 +5,7 @@ module type S = sig
 
   val make : int -> t
   val is_empty : xt:'a Kcas.Xt.t -> t -> bool
-  val size : t -> xt:'a Kcas.Xt.t -> int
+  val size : xt:'a Kcas.Xt.t -> t -> int
   val capacity : t -> xt:'a Kcas.Xt.t -> int
   val put : xt:'a Kcas.Xt.t -> t -> k -> v -> unit
   val get : xt:'a Kcas.Xt.t -> t -> k -> v option
