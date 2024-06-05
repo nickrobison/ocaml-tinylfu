@@ -14,3 +14,8 @@
  (libraries tiny_lfu alcotest qcheck-core qcheck-stm.stm stm_run)
  (preprocess
   (pps ppx_deriving.show)))
+
+(test
+  (name lru_dscheck)
+  (modules lru_dscheck)
+  (libraries tiny_lfu alcotest atomic dscheck))
