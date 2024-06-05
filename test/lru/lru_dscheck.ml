@@ -9,7 +9,7 @@ module I = struct
   let hash (i : int) = Hashtbl.hash i
 end
 
-module C = Tiny_lfu.Lru.Make (I) (I)
+module C = Lru.Make (I) (I)
 
 let put_get () =
   Atomic.trace (fun () ->

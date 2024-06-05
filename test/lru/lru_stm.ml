@@ -17,7 +17,7 @@ module I = struct
   let pp = Fmt.int
 end
 
-module C = Tiny_lfu.Lru.Make (S) (I)
+module C = Lru.Make (S) (I)
 module M = Map.Make (String)
 
 module Spec = struct

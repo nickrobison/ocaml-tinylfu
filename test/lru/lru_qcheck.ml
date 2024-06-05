@@ -9,7 +9,7 @@ module SK = struct
   let pp = Fmt.string
 end
 
-module C = Tiny_lfu.Lru.Make (SK) (SK)
+module C = Lru.Make (SK) (SK)
 module S = Set.Make (String)
 
 let add_to_cache c k = Xt.commit { tx = C.put c k k }
