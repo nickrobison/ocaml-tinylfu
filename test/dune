@@ -6,4 +6,4 @@
 (test
  (name lru_qcheck)
  (modules lru_qcheck)
- (libraries tiny_lfu alcotest qcheck-alcotest))
+ (libraries tiny_lfu alcotest qcheck-alcotest barrier))

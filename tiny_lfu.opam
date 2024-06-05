@@ -20,6 +20,7 @@ depends: [
   "qcheck-alcotest" {with-test}
   "dscheck" {with-test}
   "alcotest" {with-test}
+  "ppx_deriving" {with-test}
   "odoc" {with-doc}
 ]
 build: [

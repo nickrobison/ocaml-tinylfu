@@ -41,6 +41,7 @@ let tests_sequential =
           List.iter (remove_from_cache cache) lpush;
           assert (Xt.commit { tx = C.is_empty cache });
           true);
+      (* Test 3: eviction *)
       Test.make ~name:"Eviction" (list printable_string) (fun lpush ->
           let distinct = S.of_list lpush |> S.elements in
           assume (List.length distinct >= 3);
@@ -53,6 +54,43 @@ let tests_sequential =
           not (Xt.commit { tx = C.get cache hd' } |> Option.is_some));
     ]
 
+let tests_one_consumer_one_producer =
+  QCheck.
+    [
+      Test.make ~name:"parallel add-get" (list string) (fun lpush ->
+          let cache = C.make (List.length lpush * 2) in
+          let barrier = Barrier.create 2 in
+
+          let producer =
+            Domain.spawn (fun () ->
+                Barrier.await barrier;
+                List.iter (add_to_cache cache) lpush)
+          in
+
+          Barrier.await barrier;
+
+          let verify =
+            List.fold_left
+              (fun acc item ->
+                let rec v () =
+                  match Xt.commit { tx = C.get cache item } with
+                  | None ->
+                      Domain.cpu_relax ();
+                      v ()
+                  | Some i -> acc && SK.equal i item
+                in
+                v ())
+              true lpush
+          in
+          Domain.join producer;
+          verify);
+    ]
+
 let () =
   let to_alcotest = List.map QCheck_alcotest.to_alcotest in
-  Alcotest.run "Lru" [ ("tests_sequential", to_alcotest tests_sequential) ]
+  Alcotest.run "Lru"
+    [
+      ("tests_sequential", to_alcotest tests_sequential);
+      ( "tests_one_consumer_one_producer",
+        to_alcotest tests_one_consumer_one_producer );
+    ]
