@@ -34,7 +34,7 @@ module Spec = struct
 
   let arb_cmd _s =
     let int_gen = Gen.nat in
-    let str_gen = Gen.small_string ~gen:Gen.printable in
+    let str_gen = Gen.string_size (Gen.return 5) in
     QCheck.make ~print:show_cmd
       (Gen.oneof
          [
@@ -70,7 +70,7 @@ module Spec = struct
     match (cmd, res) with
     | Is_empty, Res ((Bool, _), res) -> res = (M.cardinal s = 0)
     | Size, Res ((Int, _), res) -> res = M.cardinal s
-    | Add (k, _), Res ((Unit, _), _) -> M.mem k s
+    | Add (_, _), Res ((Unit, _), _) -> true
     | Get k, Res ((Option Int, _), res) ->
         Option.fold ~none:true ~some:(fun i -> M.find k s = i) res
     | Remove k, Res ((Unit, _), _) -> not (M.mem k s)

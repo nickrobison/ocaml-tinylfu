@@ -41,8 +41,7 @@ module Make (K : Key) (V : Value) = struct
     let node =
       match Hashtbl.Xt.find_opt ~xt cache.table k with
       | None ->
-          if cache.capacity = Xt.update ~xt cache.size (fun n -> max 0 (n + 1))
-          then
+          if cache.capacity = Xt.update ~xt cache.size (fun n -> n + 1) then
             Dllist.Xt.take_blocking_r ~xt cache.order
             |> Hashtbl.Xt.remove ~xt cache.table;
           Dllist.Xt.add_l ~xt k cache.order
