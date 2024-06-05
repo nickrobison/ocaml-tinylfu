@@ -1,5 +1,15 @@
 open Kcas
-module C = Tiny_lfu.Lru.Make (String)
+
+module SK = struct
+  type t = string
+
+  let equal (a : string) b = String.equal a b
+  let hash (i : string) = Hashtbl.hash i
+  let weight _ = 1
+  let pp = Fmt.string
+end
+
+module C = Tiny_lfu.Lru.Make (SK) (SK)
 module S = Set.Make (String)
 
 let add_to_cache c k = Xt.commit { tx = C.put c k k }
@@ -31,7 +41,7 @@ let tests_sequential =
           List.iter (remove_from_cache cache) lpush;
           assert (Xt.commit { tx = C.is_empty cache });
           true);
-      Test.make ~name:"Eviction" (list string) (fun lpush ->
+      Test.make ~name:"Eviction" (list printable_string) (fun lpush ->
           let distinct = S.of_list lpush |> S.elements in
           assume (List.length distinct >= 3);
           let cache = C.make (List.length distinct - 1) in
@@ -40,7 +50,7 @@ let tests_sequential =
           let hd' = List.hd tl and tl' = List.tl tl in
           List.iter (get_from_cache cache) tl';
           add_to_cache cache hd;
-          not (Xt.commit { tx = C.get cache hd' } |> Option.is_none));
+          not (Xt.commit { tx = C.get cache hd' } |> Option.is_some));
     ]
 
 let () =

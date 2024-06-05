@@ -1,9 +1,22 @@
 open Kcas
 open Kcas_data
 
-module Make (K : Stdlib.Hashtbl.HashedType) = struct
+module type Key = sig
+  include Stdlib.Hashtbl.HashedType
+
+  val pp : Format.formatter -> t -> unit
+end
+
+module type Value = sig
+  type t
+
+  val weight : t -> int
+  val pp : Format.formatter -> t -> unit
+end
+
+module Make (K : Key) (V : Value) = struct
   type k = K.t
-  type v = K.t
+  type v = V.t
 
   type t = {
     capacity : int;
@@ -25,6 +38,7 @@ module Make (K : Stdlib.Hashtbl.HashedType) = struct
   let capacity cache ~xt:_ = cache.capacity
 
   let put ~xt cache k v =
+    Fmt.pr "Adding %a %a to cache\n" K.pp k V.pp v;
     let node =
       match Hashtbl.Xt.find_opt ~xt cache.table k with
       | None ->

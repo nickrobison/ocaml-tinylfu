@@ -19,7 +19,7 @@
  (name tiny_lfu)
  (synopsis "OCaml implementation of Tiny-LFU cache")
  (description "A longer description")
- (depends ocaml dune zarith kcas_data (qcheck :with-test) (qcheck-stm :with-test) (qcheck-alcotest :with-test) (dscheck :with-test) (alcotest :with-test))
+ (depends ocaml dune zarith kcas_data fmt (qcheck :with-test) (qcheck-stm :with-test) (qcheck-alcotest :with-test) (dscheck :with-test) (alcotest :with-test))
  (tags
   (topics "to describe" your project)))
 
