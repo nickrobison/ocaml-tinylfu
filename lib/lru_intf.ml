@@ -4,10 +4,10 @@ module type S = sig
   type v
 
   val make : int -> t
-  val is_empty : t -> xt:'a Kcas.Xt.t -> bool
+  val is_empty : xt:'a Kcas.Xt.t -> t -> bool
   val size : t -> xt:'a Kcas.Xt.t -> int
   val capacity : t -> xt:'a Kcas.Xt.t -> int
-  val put : t -> xt:'a Kcas.Xt.t -> k -> v -> unit
-  val get : t -> xt:'a Kcas.Xt.t -> k -> v option
-  val delete : t -> xt:'a Kcas.Xt.t -> k -> unit
+  val put : xt:'a Kcas.Xt.t -> t -> k -> v -> unit
+  val get : xt:'a Kcas.Xt.t -> t -> k -> v option
+  val delete : xt:'a Kcas.Xt.t -> t -> k -> unit
 end

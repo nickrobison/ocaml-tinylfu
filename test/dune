@@ -1,3 +1,9 @@
 (test
  (name tests)
+ (modules tests utils_tests sketch_tests test_utils)
  (libraries alcotest tiny_lfu))
+
+(test
+ (name lru_qcheck)
+ (modules lru_qcheck)
+ (libraries tiny_lfu alcotest qcheck-alcotest))
