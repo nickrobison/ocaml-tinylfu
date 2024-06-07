@@ -17,7 +17,8 @@ let put_get () =
 
       Atomic.spawn (fun () ->
           for i = 1 to total_entries do
-            C.put cache i i
+            let _ = C.put cache i i in
+            ()
           done);
 
       let fetched = ref 0 in
@@ -41,7 +42,8 @@ let put_remove () =
 
       Atomic.spawn (fun () ->
           for i = 1 to total_entries do
-            C.put cache i i
+            let _ = C.put cache i i in
+            ()
           done);
 
       Atomic.spawn (fun () ->
@@ -60,7 +62,8 @@ let two_puts () =
       for i = 1 to 2 do
         Atomic.spawn (fun () ->
             for j = 1 to total_entries do
-              C.put cache j i
+              let _ = C.put cache j i in
+              ()
             done)
       done;
 
@@ -79,7 +82,7 @@ let two_domains () =
       Atomic.spawn (fun () ->
           List.iter
             (fun elem ->
-              C.put cache elem elem;
+              let _ = C.put cache elem elem in
               gets := Option.get (C.get cache elem) :: !gets)
             puts)
       |> ignore)

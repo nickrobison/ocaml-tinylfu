@@ -27,19 +27,32 @@ module Make (K : Key) (V : Value) = struct
     let is_empty ~xt cache = Xt.get ~xt cache.size == 0
     let size ~xt cache = Xt.get ~xt cache.size
 
+    let remove_and_get ~xt cache k =
+      match Hashtbl.Xt.find_opt ~xt cache k with
+      | None -> None
+      | Some (_, v) ->
+          Hashtbl.Xt.remove ~xt cache k;
+          Some (k, v)
+
+    let handle_eviction ~xt t =
+      if t.capacity = Xt.update ~xt t.size (fun n -> n + 1) then
+        let evict_key = Dllist.Xt.take_blocking_r ~xt t.order in
+        remove_and_get ~xt t.table evict_key
+      else None
+
     let put ~xt cache k v =
-      let node =
+      let node, evv =
         match Hashtbl.Xt.find_opt ~xt cache.table k with
         | None ->
-            if cache.capacity = Xt.update ~xt cache.size (fun n -> n + 1) then
-              Dllist.Xt.take_blocking_r ~xt cache.order
-              |> Hashtbl.Xt.remove ~xt cache.table;
-            Dllist.Xt.add_l ~xt k cache.order
+            let evicted = handle_eviction ~xt cache in
+            let n' = Dllist.Xt.add_l ~xt k cache.order in
+            (n', evicted)
         | Some (node, _) ->
             Dllist.Xt.move_l ~xt node cache.order;
-            node
+            (node, None)
       in
-      Hashtbl.Xt.replace ~xt cache.table k (node, v)
+      Hashtbl.Xt.replace ~xt cache.table k (node, v);
+      evv
 
     let get ~xt cache (k : 'k) =
       Hashtbl.Xt.find_opt ~xt cache.table k

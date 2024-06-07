@@ -13,7 +13,9 @@ module M = Lru.Make (SK) (SK)
 module C = M.Tx
 module S = Set.Make (String)
 
-let add_to_cache c k = Xt.commit { tx = C.put c k k }
+let add_to_cache c k =
+  let _ = Xt.commit { tx = C.put c k k } in
+  ()
 
 let get_from_cache c k =
   match Xt.commit { tx = C.get c k } with
