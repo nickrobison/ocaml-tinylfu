@@ -21,7 +21,9 @@ let get_from_cache c k =
   | Some v when v = k -> ()
   | Some v -> failwith (Fmt.str "Cache key %s had value %s" k v)
 
-let remove_from_cache c k = Xt.commit { tx = C.remove c k }
+let remove_from_cache c k =
+  let _ = Xt.commit { tx = C.remove c k } in
+  ()
 
 let tests_sequential =
   QCheck.

@@ -12,4 +12,4 @@ module type Value = sig
 end
 
 module Make (K : Key) (V : Value) :
-  Lru_intf.S with type k = K.t and type v = V.t
+  Cache_intf.S with type k = K.t and type v = V.t

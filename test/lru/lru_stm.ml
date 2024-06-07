@@ -29,7 +29,7 @@ module Spec = struct
   [@@deriving show]
 
   type state = int M.t
-  type sut = (string, int) C.t
+  type sut = C.t
 
   let arb_cmd _s =
     let int_gen = Gen.nat in
@@ -61,7 +61,7 @@ module Spec = struct
     match cmd with
     | Add (k, v) -> Res (unit, C.put cache k v)
     | Get k -> Res (option int, C.get cache k)
-    | Remove k -> Res (unit, C.remove cache k)
+    | Remove k -> Res (bool, C.remove cache k)
     | Size -> Res (int, C.size cache)
     | Is_empty -> Res (bool, C.is_empty cache)
 
@@ -72,7 +72,7 @@ module Spec = struct
     | Add (_, _), Res ((Unit, _), _) -> true
     | Get k, Res ((Option Int, _), res) ->
         Option.fold ~none:true ~some:(fun i -> M.find k s = i) res
-    | Remove k, Res ((Unit, _), _) -> not (M.mem k s)
+    | Remove k, Res ((Bool, _), _) -> not (M.mem k s)
     | _, _ -> false
 end
 

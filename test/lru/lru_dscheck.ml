@@ -46,7 +46,8 @@ let put_remove () =
 
       Atomic.spawn (fun () ->
           for i = 1 to total_entries do
-            C.remove cache i
+            let _ = C.remove cache i in
+            ()
           done);
 
       Atomic.final (fun () -> Atomic.check (fun () -> C.is_empty cache)))
