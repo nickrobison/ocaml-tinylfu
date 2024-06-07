@@ -1,5 +1,3 @@
-open Kcas
-
 module I = struct
   type t = int
 
@@ -19,13 +17,13 @@ let put_get () =
 
       Atomic.spawn (fun () ->
           for i = 1 to total_entries do
-            Xt.commit { tx = C.put cache i i }
+            C.put cache i i
           done);
 
       let fetched = ref 0 in
       Atomic.spawn (fun () ->
           for i = 1 to total_entries do
-            match Xt.commit { tx = C.get cache i } with
+            match C.get cache i with
             | None -> ()
             | Some v ->
                 assert (v == !fetched + 1);
@@ -43,16 +41,15 @@ let put_remove () =
 
       Atomic.spawn (fun () ->
           for i = 1 to total_entries do
-            Xt.commit { tx = C.put cache i i }
+            C.put cache i i
           done);
 
       Atomic.spawn (fun () ->
           for i = 1 to total_entries do
-            Xt.commit { tx = C.delete cache i }
+            C.remove cache i
           done);
 
-      Atomic.final (fun () ->
-          Atomic.check (fun () -> Xt.commit { tx = C.is_empty cache })))
+      Atomic.final (fun () -> Atomic.check (fun () -> C.is_empty cache)))
 
 let two_puts () =
   Atomic.trace (fun () ->
@@ -62,13 +59,12 @@ let two_puts () =
       for i = 1 to 2 do
         Atomic.spawn (fun () ->
             for j = 1 to total_entries do
-              Xt.commit { tx = C.put cache j i }
+              C.put cache j i
             done)
       done;
 
       Atomic.final (fun () ->
-          Atomic.check (fun () ->
-              total_entries = Xt.commit { tx = C.size cache })))
+          Atomic.check (fun () -> total_entries = C.size cache)))
 
 let two_domains () =
   let cache = C.make 32 in
@@ -82,8 +78,8 @@ let two_domains () =
       Atomic.spawn (fun () ->
           List.iter
             (fun elem ->
-              Xt.commit { tx = C.put cache elem elem };
-              gets := Option.get (Xt.commit { tx = C.get cache elem }) :: !gets)
+              C.put cache elem elem;
+              gets := Option.get (C.get cache elem) :: !gets)
             puts)
       |> ignore)
     lists;

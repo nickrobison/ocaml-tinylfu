@@ -1,6 +1,5 @@
 open QCheck
 open STM
-open Kcas
 
 module S = struct
   type t = string
@@ -30,7 +29,7 @@ module Spec = struct
   [@@deriving show]
 
   type state = int M.t
-  type sut = C.t
+  type sut = (string, int) C.t
 
   let arb_cmd _s =
     let int_gen = Gen.nat in
@@ -60,11 +59,11 @@ module Spec = struct
 
   let run cmd cache =
     match cmd with
-    | Add (k, v) -> Res (unit, Xt.commit { tx = C.put cache k v })
-    | Get k -> Res (option int, Xt.commit { tx = C.get cache k })
-    | Remove k -> Res (unit, Xt.commit { tx = C.delete cache k })
-    | Size -> Res (int, Xt.commit { tx = C.size cache })
-    | Is_empty -> Res (bool, Xt.commit { tx = C.is_empty cache })
+    | Add (k, v) -> Res (unit, C.put cache k v)
+    | Get k -> Res (option int, C.get cache k)
+    | Remove k -> Res (unit, C.remove cache k)
+    | Size -> Res (int, C.size cache)
+    | Is_empty -> Res (bool, C.is_empty cache)
 
   let postcond cmd (s : state) res =
     match (cmd, res) with
