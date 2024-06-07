@@ -25,6 +25,7 @@ module Make (K : Key) (V : Value) = struct
 
   module Tx = struct
     let is_empty ~xt cache = Xt.get ~xt cache.size == 0
+    let is_full ~xt cache = Xt.get ~xt cache.size >= cache.capacity
     let size ~xt cache = Xt.get ~xt cache.size
 
     let remove_and_get ~xt cache k =
@@ -73,6 +74,7 @@ module Make (K : Key) (V : Value) = struct
   end
 
   let is_empty cache = Kcas.Xt.commit { tx = Tx.is_empty cache }
+  let is_full cache = Kcas.Xt.commit { tx = Tx.is_full cache }
   let size cache = Kcas.Xt.commit { tx = Tx.size cache }
   let get cache k = Kcas.Xt.commit { tx = Tx.get cache k }
 

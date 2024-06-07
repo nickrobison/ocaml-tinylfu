@@ -21,6 +21,7 @@ module type Ops = sig
   type ('x, 'fn) blocking_fn
 
   val is_empty : ('x, t -> bool) fn
+  val is_full : ('x, t -> bool) fn
   val size : ('x, t -> int) fn
   val get : ('x, t -> k -> v option) fn
   val put : ('x, t -> k -> v -> (k * v) option) blocking_fn
