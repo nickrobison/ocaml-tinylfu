@@ -1,18 +1,6 @@
 open Kcas
 open Kcas_data
-
-module type Key = sig
-  include Stdlib.Hashtbl.HashedType
-
-  val pp : Format.formatter -> t -> unit
-end
-
-module type Value = sig
-  type t
-
-  val weight : t -> int
-  val pp : Format.formatter -> t -> unit
-end
+open Cache_intf
 
 module Make (K : Key) (V : Value) = struct
   type k = K.t

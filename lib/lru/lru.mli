@@ -1,15 +1,7 @@
-module type Key = sig
-  include Stdlib.Hashtbl.HashedType
+open Cache_intf
 
-  val pp : Format.formatter -> t -> unit
+module Make (K : Key) (V : Value) : sig
+  include S with type k = K.t and type v = V.t
+
+  val make : int -> t
 end
-
-module type Value = sig
-  type t
-
-  val weight : t -> int
-  val pp : Format.formatter -> t -> unit
-end
-
-module Make (K : Key) (V : Value) :
-  Cache_intf.S with type k = K.t and type v = V.t

@@ -1,5 +1,18 @@
 open Kcas
 
+module type Key = sig
+  include Stdlib.Hashtbl.HashedType
+
+  val pp : Format.formatter -> t -> unit
+end
+
+module type Value = sig
+  type t
+
+  val weight : t -> int
+  val pp : Format.formatter -> t -> unit
+end
+
 module type Ops = sig
   type k
   type v
@@ -38,6 +51,5 @@ module type S = sig
       with type ('x, 'fn) fn := 'fn
       with type ('x, 'fn) blocking_fn := ?timeoutf:float -> 'fn
 
-  val make : int -> t
   val capacity : t -> int
 end
