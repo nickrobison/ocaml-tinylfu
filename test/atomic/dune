@@ -1,3 +1,3 @@
 (library
-  (name atomic)
-  (libraries dscheck))
+ (name atomic)
+ (libraries dscheck))

@@ -1,4 +1,4 @@
 (library
-  (name lru)
-  (public_name tiny_lfu.lru)
-  (libraries fmt kcas_data tiny_lfu.cache))
+ (name lru)
+ (public_name tiny_lfu.lru)
+ (libraries fmt kcas_data tiny_lfu.cache))

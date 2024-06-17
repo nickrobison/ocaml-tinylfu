@@ -7,9 +7,9 @@
 (source
  (github nickrobison/tiny-lfu))
 
-(authors "Author Name")
+(authors "Nick Robison")
 
-(maintainers "Maintainer Name")
+(maintainers "Nick Robison")
 
 (license MIT)
 
@@ -18,9 +18,7 @@
 (package
  (name tiny_lfu)
  (synopsis "OCaml implementation of Tiny-LFU cache")
- (description "A longer description")
+ (description "Thread-safe Ocaml implementation of TinyLFU cache. Mostly an experiment to play with KCAS and STM.")
  (depends ocaml dune zarith kcas_data fmt (qcheck :with-test) (qcheck-stm :with-test) (qcheck-alcotest :with-test) (dscheck :with-test) (alcotest :with-test) (ppx_deriving :with-test))
  (tags
-  (topics "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
+  (cache kcas lfu stm)))
